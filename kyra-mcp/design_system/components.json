@@ -1,0 +1,73 @@
+{
+  "Button": {
+    "description": "Primary interactive element for triggering actions",
+    "allowed_variants": ["primary", "secondary", "ghost", "danger"],
+    "allowed_sizes": ["sm", "md", "lg"],
+    "allowed_color_tokens": [
+      "color.brand.primary",
+      "color.brand.secondary",
+      "color.semantic.error",
+      "color.neutral.0"
+    ],
+    "required_props": ["variant"],
+    "forbidden_patterns": [
+      "style=",
+      "backgroundColor=",
+      "color=#",
+      "color=rgb",
+      "padding=",
+      "margin="
+    ],
+    "allowed_props": ["variant", "size", "disabled", "onClick", "children", "type", "className"],
+    "examples": {
+      "correct": "<Button variant=\"primary\" size=\"md\">Submit</Button>",
+      "incorrect": "<button style=\"background:#FF5733; padding:10px\">Submit</button>"
+    }
+  },
+  "Input": {
+    "description": "Text input field for user data entry",
+    "allowed_variants": ["default", "error", "success", "disabled"],
+    "allowed_sizes": ["sm", "md", "lg"],
+    "allowed_color_tokens": [
+      "color.neutral.200",
+      "color.neutral.300",
+      "color.semantic.error",
+      "color.semantic.success",
+      "color.brand.primary"
+    ],
+    "required_props": ["variant"],
+    "forbidden_patterns": [
+      "style=",
+      "border=",
+      "color=#",
+      "color=rgb"
+    ],
+    "allowed_props": ["variant", "size", "placeholder", "value", "onChange", "disabled", "label", "errorMessage", "className"],
+    "examples": {
+      "correct": "<Input variant=\"default\" size=\"md\" placeholder=\"Enter email\" />",
+      "incorrect": "<input style=\"border: 1px solid red\" placeholder=\"Enter email\" />"
+    }
+  },
+  "Card": {
+    "description": "Container for grouping related content",
+    "allowed_variants": ["elevated", "outlined", "filled"],
+    "allowed_sizes": ["sm", "md", "lg", "full"],
+    "allowed_color_tokens": [
+      "color.neutral.0",
+      "color.neutral.100",
+      "color.neutral.200"
+    ],
+    "required_props": ["variant"],
+    "forbidden_patterns": [
+      "style=",
+      "background=#",
+      "background=rgb",
+      "box-shadow="
+    ],
+    "allowed_props": ["variant", "size", "children", "onClick", "className"],
+    "examples": {
+      "correct": "<Card variant=\"elevated\" size=\"md\">content</Card>",
+      "incorrect": "<div style=\"background:#fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1)\">content</div>"
+    }
+  }
+}
