@@ -1,13 +1,16 @@
 {
   "Button": {
-    "description": "Primary interactive element for triggering actions",
-    "allowed_variants": ["primary", "secondary", "ghost", "danger"],
-    "allowed_sizes": ["sm", "md", "lg"],
+    "description": "Primary interactive control for actions, forms, and navigation. Use prompt keywords (submit, ghost, danger, link) to steer variant.",
+    "allowed_variants": ["primary", "secondary", "ghost", "danger", "link"],
+    "allowed_sizes": ["sm", "md", "lg", "xl"],
     "allowed_color_tokens": [
       "color.brand.primary",
       "color.brand.secondary",
+      "color.brand.accent",
       "color.semantic.error",
-      "color.neutral.0"
+      "color.semantic.success",
+      "color.neutral.0",
+      "color.neutral.700"
     ],
     "required_props": ["variant"],
     "forbidden_patterns": [
@@ -18,15 +21,166 @@
       "padding=",
       "margin="
     ],
-    "allowed_props": ["variant", "size", "disabled", "onClick", "children", "type", "className"],
+    "allowed_props": ["variant", "size", "disabled", "loading", "onClick", "children", "type", "className", "href", "icon"],
     "examples": {
       "correct": "<Button variant=\"primary\" size=\"md\">Submit</Button>",
       "incorrect": "<button style=\"background:#FF5733; padding:10px\">Submit</button>"
     }
   },
   "Input": {
-    "description": "Text input field for user data entry",
-    "allowed_variants": ["default", "error", "success", "disabled"],
+    "description": "Single-line text entry with validation states. Prompts mentioning error, success, or disabled map to variants.",
+    "allowed_variants": ["default", "error", "success", "disabled", "warning"],
+    "allowed_sizes": ["sm", "md", "lg"],
+    "allowed_color_tokens": [
+      "color.neutral.200",
+      "color.neutral.300",
+      "color.semantic.error",
+      "color.semantic.success",
+      "color.semantic.warning",
+      "color.brand.primary"
+    ],
+    "required_props": ["variant"],
+    "forbidden_patterns": [
+      "style=",
+      "border=",
+      "color=#",
+      "color=rgb",
+      "backgroundColor="
+    ],
+    "allowed_props": ["variant", "size", "placeholder", "value", "defaultValue", "onChange", "disabled", "readOnly", "label", "errorMessage", "hint", "type", "name", "className"],
+    "examples": {
+      "correct": "<Input variant=\"default\" size=\"md\" placeholder=\"Enter email\" />",
+      "incorrect": "<input style=\"border: 1px solid red\" placeholder=\"Enter email\" />"
+    }
+  },
+  "Card": {
+    "description": "Surface for grouping related content with elevation, outline, fill, or flat treatments.",
+    "allowed_variants": ["elevated", "outlined", "filled", "flat"],
+    "allowed_sizes": ["sm", "md", "lg", "full"],
+    "allowed_color_tokens": [
+      "color.neutral.0",
+      "color.neutral.100",
+      "color.neutral.200",
+      "color.surface.raised",
+      "color.border.subtle"
+    ],
+    "required_props": ["variant"],
+    "forbidden_patterns": [
+      "style=",
+      "background=#",
+      "background=rgb",
+      "box-shadow=",
+      "rgba("
+    ],
+    "allowed_props": ["variant", "size", "children", "onClick", "className", "as", "padding"],
+    "examples": {
+      "correct": "<Card variant=\"elevated\" size=\"md\">content</Card>",
+      "incorrect": "<div style=\"background:#fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1)\">content</div>"
+    }
+  },
+  "Badge": {
+    "description": "Compact status, count, or label chip. Pair with prompts like beta, pending, or error.",
+    "allowed_variants": ["neutral", "brand", "success", "warning", "error"],
+    "allowed_sizes": ["sm", "md"],
+    "allowed_color_tokens": [
+      "color.neutral.700",
+      "color.neutral.100",
+      "color.brand.primary",
+      "color.semantic.success",
+      "color.semantic.warning",
+      "color.semantic.error",
+      "color.neutral.0"
+    ],
+    "required_props": ["variant"],
+    "forbidden_patterns": ["style=", "backgroundColor=", "color=#", "color=rgb", "padding=", "margin="],
+    "allowed_props": ["variant", "size", "children", "className", "dot"],
+    "examples": {
+      "correct": "<Badge variant=\"brand\" size=\"sm\">Beta</Badge>",
+      "incorrect": "<span style=\"background:#1A73E8;color:#fff;padding:2px 8px\">Beta</span>"
+    }
+  },
+  "Alert": {
+    "description": "Inline feedback banner for info, success, warning, or error contexts.",
+    "allowed_variants": ["info", "success", "warning", "error"],
+    "allowed_sizes": ["sm", "md"],
+    "allowed_color_tokens": [
+      "color.semantic.info",
+      "color.semantic.infoMuted",
+      "color.semantic.success",
+      "color.semantic.successMuted",
+      "color.semantic.warning",
+      "color.semantic.warningMuted",
+      "color.semantic.error",
+      "color.semantic.errorMuted",
+      "color.neutral.900"
+    ],
+    "required_props": ["variant"],
+    "forbidden_patterns": ["style=", "backgroundColor=", "color=#", "color=rgb", "border=", "box-shadow="],
+    "allowed_props": ["variant", "size", "title", "children", "onDismiss", "className", "role"],
+    "examples": {
+      "correct": "<Alert variant=\"info\" size=\"md\" title=\"Heads up\">Your session will expire soon.</Alert>",
+      "incorrect": "<div style=\"background:#E8F0FE;border:1px solid blue\">Your session will expire soon.</div>"
+    }
+  },
+  "Link": {
+    "description": "Text navigation element; use instead of raw anchors for token-aware emphasis.",
+    "allowed_variants": ["primary", "secondary", "muted", "danger"],
+    "allowed_sizes": ["sm", "md", "lg"],
+    "allowed_color_tokens": [
+      "color.brand.primary",
+      "color.neutral.700",
+      "color.neutral.500",
+      "color.semantic.error",
+      "color.brand.secondary"
+    ],
+    "required_props": ["variant"],
+    "forbidden_patterns": ["style=", "color=#", "color=rgb", "text-decoration: none !important"],
+    "allowed_props": ["variant", "size", "href", "children", "external", "className", "onClick"],
+    "examples": {
+      "correct": "<Link variant=\"primary\" size=\"md\" href=\"/docs\">Documentation</Link>",
+      "incorrect": "<a style=\"color:#1A73E8\" href=\"/docs\">Documentation</a>"
+    }
+  },
+  "Text": {
+    "description": "Body, caption, label, or muted copy—always reference typography tokens, never raw pixel font sizes in JSX.",
+    "allowed_variants": ["body", "caption", "label", "muted"],
+    "allowed_sizes": ["sm", "md", "lg"],
+    "allowed_color_tokens": [
+      "color.neutral.900",
+      "color.neutral.700",
+      "color.neutral.500",
+      "color.semantic.error",
+      "color.brand.primary"
+    ],
+    "required_props": ["variant"],
+    "forbidden_patterns": ["style=", "fontSize=", "color=#", "color=rgb", "lineHeight="],
+    "allowed_props": ["variant", "size", "children", "as", "className", "truncate"],
+    "examples": {
+      "correct": "<Text variant=\"body\" size=\"md\">Welcome back.</Text>",
+      "incorrect": "<p style=\"font-size:14px;color:#5F6368\">Welcome back.</p>"
+    }
+  },
+  "Heading": {
+    "description": "Page and section titles; variants express hierarchy (display through h3), not raw heading tags alone.",
+    "allowed_variants": ["display", "h1", "h2", "h3"],
+    "allowed_sizes": ["sm", "md", "lg", "xl"],
+    "allowed_color_tokens": [
+      "color.neutral.900",
+      "color.neutral.800",
+      "color.brand.primary",
+      "color.neutral.700"
+    ],
+    "required_props": ["variant"],
+    "forbidden_patterns": ["style=", "fontSize=", "color=#", "color=rgb", "margin="],
+    "allowed_props": ["variant", "size", "children", "as", "className"],
+    "examples": {
+      "correct": "<Heading variant=\"h1\" size=\"lg\">Account settings</Heading>",
+      "incorrect": "<h1 style=\"font-size:32px;margin:0\">Account settings</h1>"
+    }
+  },
+  "Select": {
+    "description": "Dropdown for choosing one option; keep states aligned with form validation.",
+    "allowed_variants": ["default", "error", "success"],
     "allowed_sizes": ["sm", "md", "lg"],
     "allowed_color_tokens": [
       "color.neutral.200",
@@ -36,38 +190,29 @@
       "color.brand.primary"
     ],
     "required_props": ["variant"],
-    "forbidden_patterns": [
-      "style=",
-      "border=",
-      "color=#",
-      "color=rgb"
-    ],
-    "allowed_props": ["variant", "size", "placeholder", "value", "onChange", "disabled", "label", "errorMessage", "className"],
+    "forbidden_patterns": ["style=", "border=", "color=#", "color=rgb", "backgroundColor="],
+    "allowed_props": ["variant", "size", "name", "value", "defaultValue", "onChange", "disabled", "label", "placeholder", "children", "className"],
     "examples": {
-      "correct": "<Input variant=\"default\" size=\"md\" placeholder=\"Enter email\" />",
-      "incorrect": "<input style=\"border: 1px solid red\" placeholder=\"Enter email\" />"
+      "correct": "<Select variant=\"default\" size=\"md\" placeholder=\"Country\"><option>US</option></Select>",
+      "incorrect": "<select style=\"border:2px solid red\"><option>US</option></select>"
     }
   },
-  "Card": {
-    "description": "Container for grouping related content",
-    "allowed_variants": ["elevated", "outlined", "filled"],
-    "allowed_sizes": ["sm", "md", "lg", "full"],
+  "Checkbox": {
+    "description": "Boolean input for agreements, filters, and toggles; use error variant when validation fails.",
+    "allowed_variants": ["default", "error"],
+    "allowed_sizes": ["sm", "md"],
     "allowed_color_tokens": [
-      "color.neutral.0",
-      "color.neutral.100",
-      "color.neutral.200"
+      "color.brand.primary",
+      "color.semantic.error",
+      "color.neutral.700",
+      "color.neutral.300"
     ],
     "required_props": ["variant"],
-    "forbidden_patterns": [
-      "style=",
-      "background=#",
-      "background=rgb",
-      "box-shadow="
-    ],
-    "allowed_props": ["variant", "size", "children", "onClick", "className"],
+    "forbidden_patterns": ["style=", "width=", "height=", "color=#", "color=rgb", "accentColor="],
+    "allowed_props": ["variant", "size", "label", "checked", "defaultChecked", "onChange", "disabled", "name", "className"],
     "examples": {
-      "correct": "<Card variant=\"elevated\" size=\"md\">content</Card>",
-      "incorrect": "<div style=\"background:#fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1)\">content</div>"
+      "correct": "<Checkbox variant=\"default\" size=\"md\" label=\"I agree to the terms\" />",
+      "incorrect": "<input type=\"checkbox\" style=\"width:20px;height:20px\" />"
     }
   }
 }

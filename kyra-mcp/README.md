@@ -27,7 +27,9 @@ kyra-mcp/
 | `get_tokens` | anytime | returns all design tokens |
 | `get_component_spec(name)` | anytime | full contract for a component |
 | `audit_context(component, intent)` | BEFORE generating | returns constraints the agent must follow |
-| `run_compliance_scorecard(component, code)` | AFTER generating | validates code, returns PASS/FAIL + fixes |
+| `run_compliance_scorecard(component, code)` | AFTER generating | validates one component; `variant` is read from the **first** `<Component …>` tag in `code` |
+| `run_compliance_bundle(code)` | AFTER multi-component JSX | discovers all `<Button>`, `<Input>`, … tags and runs the same checks **once per component type**; returns JSON with overall PASS/FAIL |
+| `read_asset(path, max_chars?, max_bytes?)` | anytime | reads assets under `kyra-mcp/` (md/json, images as base64, pdf/pptx as extracted text) |
 
 ---
 

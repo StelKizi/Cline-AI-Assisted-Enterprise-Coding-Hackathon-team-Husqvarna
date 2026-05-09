@@ -1,23 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const COMPONENTS = ["Button", "Input", "Card"];
+import { ErrorBox } from "@/components/ErrorBox";
+import { KyraHeader } from "@/components/KyraHeader";
+import { Spinner } from "@/components/Spinner";
+import { extractApiError } from "@/lib/kyra/api-error";
+import type { ScorecardResult } from "@/lib/kyra/types";
+
+const DEFAULT_COMPONENTS = ["Button", "Input", "Card"];
 
 const EXAMPLES = {
   bad: `<button style="background:#FF5733; padding:10px">Sign up</button>`,
   good: `<Button variant="primary" size="md">Sign up</Button>`,
 };
 
-type ScorecardResult = {
-  status: "PASS" | "FAIL";
-  passed: number;
-  total: number;
-  checks: string[];
-  fixes: string[];
-};
-
 export default function Home() {
+  const [components, setComponents] = useState<string[]>(DEFAULT_COMPONENTS);
   const [component, setComponent] = useState("Button");
   const [code, setCode] = useState(EXAMPLES.bad);
   const [result, setResult] = useState<ScorecardResult | null>(null);
@@ -25,20 +24,41 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [resultKey, setResultKey] = useState(0);
 
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/kyra/components");
+        if (!res.ok) return;
+        const data = (await res.json()) as { list?: { name: string }[] };
+        const names = data.list?.map((c) => c.name).filter(Boolean);
+        if (!cancelled && names?.length) {
+          setComponents(names);
+          setComponent((prev) => (names.includes(prev) ? prev : names[0]));
+        }
+      } catch {
+        /* keep defaults */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   async function runScorecard() {
     setLoading(true);
     setError(null);
     setResult(null);
     try {
-      const res = await fetch("http://localhost:8000/compliance-scorecard", {
+      const res = await fetch("/api/kyra/compliance-scorecard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ component_name: component, code }),
       });
-      if (!res.ok) throw new Error(`API error: ${res.status}`);
       const data = await res.json();
+      if (!res.ok) throw new Error(extractApiError(data, res.status, "Unknown error"));
       setResultKey((k) => k + 1);
-      setResult(data);
+      setResult(data as ScorecardResult);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unknown error");
     } finally {
@@ -48,15 +68,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-3 animate-fade-in">
-        <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-          <span className="text-white text-sm font-bold">K</span>
-        </div>
-        <div>
-          <h1 className="text-lg font-semibold text-gray-900">Kyra</h1>
-          <p className="text-xs text-gray-500">Design System Compliance</p>
-        </div>
-      </header>
+      <KyraHeader
+        title="Kyra"
+        subtitle="Design System Compliance"
+        navLinks={[{ href: "/studio", label: "Studio" }]}
+      />
 
       <main className="max-w-3xl mx-auto px-6 py-10 space-y-6">
 
@@ -64,7 +80,7 @@ export default function Home() {
         <div className="space-y-2 animate-fade-in" style={{ animationDelay: "60ms" }}>
           <label className="text-sm font-medium text-gray-700">Component</label>
           <div className="flex gap-2">
-            {COMPONENTS.map((c) => (
+            {components.map((c) => (
               <button
                 key={c}
                 onClick={() => setComponent(c)}
@@ -117,7 +133,7 @@ export default function Home() {
         >
           {loading ? (
             <>
-              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <Spinner />
               Running scorecard...
             </>
           ) : (
@@ -127,9 +143,12 @@ export default function Home() {
 
         {/* Error */}
         {error && (
-          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 animate-fade-in">
-            {error}. Make sure Kyra API is running on port 8000.
-          </div>
+          <ErrorBox className="text-sm px-4 py-3 animate-fade-in">
+            {error}. Check that{" "}
+            <code className="bg-red-100 px-1 rounded">KYRA_MCP_ROOT</code> points to
+            the <code className="bg-red-100 px-1 rounded">kyra-mcp</code> folder if the
+            app cannot find <code className="bg-red-100 px-1 rounded">design_system/</code>.
+          </ErrorBox>
         )}
 
         {/* Result */}
