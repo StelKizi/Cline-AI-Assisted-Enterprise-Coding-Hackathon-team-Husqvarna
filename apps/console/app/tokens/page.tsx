@@ -49,7 +49,7 @@ export default function TokensPage() {
             <div className="space-y-2">
               {group.tokens.map((t) => (
                 <div key={t.name} className="flex items-center gap-3 text-sm">
-                  {t.preview === "bg" && (
+                  {"preview" in t && t.preview === "bg" && (
                     <div className="w-6 h-6 rounded border border-gray-200" style={{ backgroundColor: t.value }} />
                   )}
                   <code className="text-gray-800 font-mono text-xs bg-gray-50 px-2 py-0.5 rounded">{t.name}</code>

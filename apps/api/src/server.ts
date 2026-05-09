@@ -1,6 +1,7 @@
 // ─── Kyra API Server ────────────────────────────────────────────────
 // REST API: the load-bearing interface. Everything else wraps this.
 
+import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -34,9 +35,7 @@ app.route("/api/v1", v1);
 
 // ─── Start ──────────────────────────────────────────────────────────
 const port = parseInt(process.env.PORT || "3737");
-console.log(`🔵 Kyra API running on http://localhost:${port}`);
 
-export default {
-  port,
-  fetch: app.fetch,
-};
+serve({ fetch: app.fetch, port }, () => {
+  console.log(`Kyra API running on http://localhost:${port}`);
+});

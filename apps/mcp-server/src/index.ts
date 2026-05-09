@@ -179,6 +179,37 @@ server.tool(
   }
 );
 
+
+// ─── Tool 7: run_compliance_scorecard ───────────────────────────────
+
+server.tool(
+  "run_compliance_scorecard",
+  `Run a component's code against the Husqvarna design system compliance engine. Validates JSX/HTML code for a specific component (Button, Input, Card, etc.) against design tokens, spacing rules, color palette, typography, and forbidden patterns. Returns a score out of 100 with individual check results.`,
+  {
+    component_name: z.string().describe("Component name to validate: Button, Input, Card, etc."),
+    code: z.string().describe("The JSX or HTML code of the component to validate"),
+  },
+  async ({ component_name, code }) => {
+    const complianceUrl = process.env.COMPLIANCE_API_URL || "http://localhost:8000";
+    const res = await fetch(`${complianceUrl}/compliance-scorecard`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ component_name, code }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Compliance API error ${res.status}: ${text}`);
+    }
+
+    const result = await res.json();
+    return {
+      content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+    };
+  }
+);
+
+
 // ─── Start ──────────────────────────────────────────────────────────
 
 async function main() {

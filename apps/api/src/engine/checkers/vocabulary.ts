@@ -1,8 +1,9 @@
 // ─── Vocabulary Checker (deterministic) ─────────────────────────────
-// Checks text against banned/approved vocabulary lists.
+// Checks text against Husqvarna banned/approved vocabulary lists.
 
 import type { ValidateRequest, Violation } from "@kyra/brand-core";
 import { v4 as uuid } from "uuid";
+import { getBannedTerms } from "../brand-state.js";
 
 export async function checkVocabulary(req: ValidateRequest): Promise<Violation[]> {
   const violations: Violation[] = [];
@@ -11,9 +12,7 @@ export async function checkVocabulary(req: ValidateRequest): Promise<Violation[]
     return violations;
   }
 
-  // TODO: Fetch from brand state
-  const bannedWords: Array<{ term: string; reason?: string; alternatives?: string[] }> = [];
-
+  const bannedWords = getBannedTerms();
   const text = req.artifact.content.toLowerCase();
 
   for (const banned of bannedWords) {
