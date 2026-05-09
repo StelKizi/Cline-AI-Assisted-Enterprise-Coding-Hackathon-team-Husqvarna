@@ -4,6 +4,7 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { serveStatic } from "@hono/node-server/serve-static";
 import { logger } from "hono/logger";
 import { validateRoute } from "./routes/validate.js";
 import { transformRoute } from "./routes/transform.js";
@@ -20,6 +21,9 @@ app.use("*", cors());
 
 // ─── Health ─────────────────────────────────────────────────────────
 app.get("/health", (c) => c.json({ status: "ok", version: "0.1.0" }));
+
+// ─── Static assets ────────────────────────────────────────────────
+app.use("/assets/*", serveStatic({ root: "./public" }));
 
 // ─── API v1 ─────────────────────────────────────────────────────────
 const v1 = new Hono();

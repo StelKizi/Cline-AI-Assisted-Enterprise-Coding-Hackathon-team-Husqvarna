@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import {
+  Building2,
   BarChart3,
   ShieldCheck,
   Palette,
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
 };
 
 const NAV = [
+  { label: "Brand", href: "/brand", Icon: Building2 },
   { label: "Activity", href: "/", Icon: BarChart3 },
   { label: "Compliance", href: "/compliance", Icon: ShieldCheck },
   { label: "Tokens", href: "/tokens", Icon: Palette },

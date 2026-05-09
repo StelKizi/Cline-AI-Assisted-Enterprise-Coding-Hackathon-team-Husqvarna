@@ -8,16 +8,20 @@
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "dev:sse": "tsx watch src/sse.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "start:sse": "node dist/sse.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
+    "express": "^4.21.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {
     "typescript": "^5.7.0",
     "tsx": "^4.19.0",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "@types/express": "^5.0.0"
   }
 }
