@@ -1,73 +1,308 @@
 {
+  "_specification": "Husqvarna Forest & Garden Web Design Specification",
+  "_priority": "Husqvarna F&G rules take precedence over generic components",
+  "_critical_note": "All designs MUST comply with Husqvarna F&G spec - see FocusState, FunctionalColors, Typography, PageLayout, BrandAssets",
+
   "Button": {
-    "description": "Primary interactive element for triggering actions",
-    "allowed_variants": ["primary", "secondary", "ghost", "danger"],
-    "allowed_sizes": ["sm", "md", "lg"],
+    "description": "Button component per Husqvarna F&G specification (REQUIRED)",
+    "allowed_variants": ["primary", "secondary", "ghost", "icon"],
+    "variant_rules": {
+      "primary": "Full-color button - Husqvarna Blue by default, White on images/dark backgrounds. Max ONE per decision context.",
+      "secondary": "Outlined button for alternative actions",
+      "ghost": "Minimal button, takes less space, de-emphasizes action while keeping it available",
+      "icon": "Space-saving button with self-explanatory icon centered center-center",
+      "buy-cart": "ALWAYS use Active Green (#3A7D00) for buy-now and add-to-cart buttons - non-negotiable"
+    },
     "allowed_color_tokens": [
-      "color.brand.primary",
-      "color.brand.secondary",
-      "color.semantic.error",
-      "color.neutral.0"
+      "color.husqvarna.blue",
+      "color.neutral.0",
+      "color.functional.active-green"
     ],
     "required_props": ["variant"],
+    "critical_rules": [
+      "If only one action on screen, MUST use primary variant",
+      "Maximum ONE primary button per decision context",
+      "All buy-now/add-to-cart buttons MUST be Active Green",
+      "Every button MUST have a focused state with high-contrast outline",
+      "Icon buttons MUST have self-explanatory icons"
+    ],
     "forbidden_patterns": [
       "style=",
-      "backgroundColor=",
-      "color=#",
-      "color=rgb",
-      "padding=",
-      "margin="
+      "backgroundColor=#",
+      "multiple-primary-in-context",
+      "buy-button-not-green"
     ],
-    "allowed_props": ["variant", "size", "disabled", "onClick", "children", "type", "className"],
+    "states": {
+      "required": ["normal", "hover", "focused", "active", "disabled"],
+      "hover": "Black overlay with opacity (never solid black or colored tint)",
+      "focused": "High-contrast outline - visually distinct from unfocused",
+      "rule": "All states must be visually distinguishable"
+    },
     "examples": {
-      "correct": "<Button variant=\"primary\" size=\"md\">Submit</Button>",
-      "incorrect": "<button style=\"background:#FF5733; padding:10px\">Submit</button>"
+      "correct": "<Button variant=\"primary\">Start here</Button>",
+      "buy-correct": "<Button variant=\"primary\" colorToken=\"active-green\">Add to cart</Button>",
+      "incorrect": "<button style=\"background:#00468C\">Buy now</button>"
     }
   },
+
+  "Card": {
+    "description": "Card component with strict background contrast rules (REQUIRED)",
+    "background_rules": {
+      "on-white": "Grey 100",
+      "on-grey": "White",
+      "critical": "Cards MUST contrast with background - non-negotiable"
+    },
+    "allowed_backgrounds": ["Grey 100", "White"],
+    "forbidden_patterns": [
+      "card-same-color-as-background",
+      "custom-background-colors"
+    ],
+    "required_props": ["backgroundContext"],
+    "examples": {
+      "correct": "<Card backgroundContext=\"white\">(renders as Grey 100)</Card>",
+      "incorrect": "<div style=\"background:white\"> on white page background"
+    }
+  },
+
   "Input": {
-    "description": "Text input field for user data entry",
+    "description": "Text input field for user data entry (GENERIC - use with Husqvarna color tokens)",
+    "_note": "Apply Husqvarna F&G color system and 4px spacing rules",
     "allowed_variants": ["default", "error", "success", "disabled"],
     "allowed_sizes": ["sm", "md", "lg"],
     "allowed_color_tokens": [
       "color.neutral.200",
       "color.neutral.300",
-      "color.semantic.error",
-      "color.semantic.success",
-      "color.brand.primary"
+      "color.functional.warning-red",
+      "color.functional.active-green",
+      "color.husqvarna.blue"
     ],
     "required_props": ["variant"],
-    "forbidden_patterns": [
-      "style=",
-      "border=",
-      "color=#",
-      "color=rgb"
+    "forbidden_patterns": ["style=", "border=", "color=#", "color=rgb"],
+    "allowed_props": [
+      "variant",
+      "size",
+      "placeholder",
+      "value",
+      "onChange",
+      "disabled",
+      "label",
+      "errorMessage",
+      "className"
     ],
-    "allowed_props": ["variant", "size", "placeholder", "value", "onChange", "disabled", "label", "errorMessage", "className"],
     "examples": {
       "correct": "<Input variant=\"default\" size=\"md\" placeholder=\"Enter email\" />",
       "incorrect": "<input style=\"border: 1px solid red\" placeholder=\"Enter email\" />"
     }
   },
-  "Card": {
-    "description": "Container for grouping related content",
-    "allowed_variants": ["elevated", "outlined", "filled"],
-    "allowed_sizes": ["sm", "md", "lg", "full"],
+  "Heading": {
+    "description": "Typography component for headings and titles",
+    "allowed_variants": ["h1", "h2", "h3", "h4", "h5", "h6"],
+    "allowed_sizes": ["xs", "sm", "md", "lg", "xl", "2xl"],
     "allowed_color_tokens": [
-      "color.neutral.0",
-      "color.neutral.100",
-      "color.neutral.200"
+      "color.husqvarna.blue",
+      "color.neutral.600",
+      "color.neutral.700",
+      "color.neutral.0"
     ],
-    "required_props": ["variant"],
+    "required_props": ["level"],
     "forbidden_patterns": [
       "style=",
-      "background=#",
-      "background=rgb",
-      "box-shadow="
+      "fontSize=",
+      "fontWeight=",
+      "lineHeight=",
+      "color=#",
+      "color=rgb"
     ],
-    "allowed_props": ["variant", "size", "children", "onClick", "className"],
+    "allowed_props": ["level", "size", "children", "className", "as"],
     "examples": {
-      "correct": "<Card variant=\"elevated\" size=\"md\">content</Card>",
-      "incorrect": "<div style=\"background:#fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1)\">content</div>"
+      "correct": "<Heading level=\"h1\" size=\"2xl\">Main Title</Heading>",
+      "incorrect": "<h1 style=\"font-size:48px; font-weight:700\">Main Title</h1>"
+    },
+    "design_specs": {
+      "h1": "48px / 700 / 48px line-height",
+      "h2": "48px / 700 / 48px line-height",
+      "h3": "18px / 700 / 24px line-height",
+      "h4": "14px / 600 / 21px line-height"
     }
+  },
+  "Link": {
+    "description": "Navigational link component",
+    "allowed_variants": ["primary", "secondary", "underlined", "plain"],
+    "allowed_sizes": ["sm", "md", "lg"],
+    "allowed_color_tokens": [
+      "color.husqvarna.blue",
+      "color.neutral.600",
+      "color.neutral.0"
+    ],
+    "required_props": ["href"],
+    "forbidden_patterns": [
+      "style=",
+      "color=#",
+      "color=rgb",
+      "text-decoration="
+    ],
+    "allowed_props": [
+      "href",
+      "variant",
+      "size",
+      "children",
+      "target",
+      "rel",
+      "className"
+    ],
+    "examples": {
+      "correct": "<Link href=\"/products\" variant=\"primary\">View Products</Link>",
+      "incorrect": "<a href=\"/products\" style=\"color:#273A60; text-decoration:underline\">View Products</a>"
+    }
+  },
+  "IconEllipse": {
+    "description": "Icon within circular container per Husqvarna F&G specification",
+    "allowed_variants": ["filled", "outlined"],
+    "variant_rules": {
+      "filled": "For prominent information and actions (e.g., play buttons)",
+      "outlined": "For secondary information and actions"
+    },
+    "critical_rules": [
+      "Icon line-thickness MUST match ellipse line-thickness at all scales",
+      "Icon and ellipse MUST use the same color",
+      "Icon width (as square) MUST be exactly half the ellipse width",
+      "Icons MUST be from a single third-party library (Lucide, Phosphor, Material Symbols, or Heroicons)",
+      "NEVER use legacy Husqvarna proprietary icon set",
+      "NEVER mix icons from multiple libraries"
+    ],
+    "sizing_formula": "icon_width = ellipse_width ÷ 2",
+    "required_props": ["variant", "iconLibrary", "iconName"],
+    "forbidden_patterns": [
+      "legacy-husqvarna-icons",
+      "mixed-icon-libraries",
+      "mismatched-line-thickness",
+      "mismatched-colors"
+    ],
+    "examples": {
+      "correct": "<IconEllipse variant=\"filled\" iconLibrary=\"lucide\" iconName=\"play\" />",
+      "incorrect": "<div><HusqvarnaIcon name=\"play\" /></div>"
+    }
+  },
+  "PageLayout": {
+    "description": "Page layout rules per Husqvarna F&G specification",
+    "grid_rules": {
+      "columns": "12 columns default (4/6/8 on small screens)",
+      "base_unit": "4px - all spacing and sizing must be multiples",
+      "outer_margin": "Minimum 8% of viewport width (reference: 60px at 1246px)",
+      "content_max_width": "Project-defined, content centered on very large screens"
+    },
+    "breakpoints": {
+      "mobile": "0-767px",
+      "tablet": "768-1199px",
+      "laptop": "1200-1539px",
+      "desktop": "1540px+"
+    },
+    "critical_rules": [
+      "Page background MUST be White, Grey 100, or Grey 200 ONLY",
+      "Header/footer MUST be White or Husqvarna Blue ONLY",
+      "All elements MUST align to 4px grid (exception: centered text within objects)",
+      "Body text line-height MUST be divisible by 4",
+      "Must demonstrate mobile-first design approach"
+    ],
+    "allowed_backgrounds": ["White", "Grey 100", "Grey 200"],
+    "forbidden_patterns": [
+      "custom-page-backgrounds",
+      "non-4px-spacing",
+      "desktop-first-design"
+    ]
+  },
+  "Typography": {
+    "description": "Typography rules per Husqvarna F&G specification",
+    "font": "Inter (variable font) - ONLY font allowed for Husqvarna F&G",
+    "body_text_sizes": {
+      "small_screens": "14-16px",
+      "large_screens": "18-20px"
+    },
+    "line_height": {
+      "formula": "Approximately 1.5x font size",
+      "critical_rule": "MUST be divisible by 4px"
+    },
+    "line_length": {
+      "optimal": "50-75 characters per line",
+      "maximum": "100 characters (large screens only)",
+      "rule": "Never exceed 100 characters - causes reader fatigue"
+    },
+    "contrast": {
+      "minimum": "3.15:1",
+      "note": "30% reduction from WCAG AA (4.5:1)",
+      "rule": "Avoid both too-low AND too-high contrast (pure black on white not recommended)"
+    },
+    "text_colors": {
+      "primary": "Grey 600",
+      "secondary": "Grey 500",
+      "highlighted": "Grey 700",
+      "forbidden": "Grey 500 or 700 as body text on bright backgrounds"
+    },
+    "modular_scale": "Use harmonious proportions derived from body text, not arbitrary values",
+    "critical_rules": [
+      "ONLY Inter font allowed - no Husqvarna Gothic, no Roboto VF",
+      "Line-height must be divisible by 4",
+      "50-100 character line length",
+      "Minimum 3.15:1 contrast ratio"
+    ],
+    "forbidden_patterns": [
+      "font-family=Husqvarna Gothic",
+      "font-family=Roboto",
+      "line-length>100ch",
+      "contrast<3.15"
+    ]
+  },
+  "FocusState": {
+    "description": "Mandatory focus state for keyboard navigation",
+    "critical_rule": "EVERY interactive element MUST have a clearly distinguishable focused state",
+    "treatment": "High-contrast outline that contrasts with both the element and background",
+    "purpose": "Allows keyboard users to know which element they are about to interact with",
+    "forbidden_patterns": [
+      "no-focus-state",
+      "low-contrast-focus",
+      "focus-same-as-unfocused"
+    ],
+    "compliance": "This is a critical accessibility requirement - failure is a major violation"
+  },
+  "FunctionalColors": {
+    "description": "Strict functional color usage rules",
+    "colors": {
+      "active-green": "#3A7D00 - Available state, buy-now, add-to-cart",
+      "aware-yellow": "#C4A800 - Awareness, reminders",
+      "warning-red": "#B30000 - Warnings, errors",
+      "husqvarna-orange": "#C45A00 - Alert, take notice (e.g., reduced price)"
+    },
+    "critical_rules": [
+      "Functional colors MUST ONLY be used for their defined purpose",
+      "NEVER use functional colors decoratively",
+      "All buy-now/add-to-cart buttons MUST be Active Green",
+      "Red elements that are not warnings/errors are violations",
+      "Green elements that are not availability/commerce signals are violations"
+    ],
+    "forbidden_patterns": [
+      "decorative-functional-colors",
+      "red-not-error",
+      "green-not-available",
+      "buy-button-not-green"
+    ]
+  },
+  "BrandAssets": {
+    "description": "Brand asset application rules",
+    "logotype_stamp": {
+      "placement": "Upper-left corner on landing pages",
+      "rule": "Always use logotype stamp treatment for unified recognition"
+    },
+    "hierarchy": "Brand → Industry → Product (in that priority order)",
+    "critical_rules": [
+      "Never alter, recolor, or reposition the logotype",
+      "Never distort proportions",
+      "Never substitute unofficial marks",
+      "Respect brand-hierarchy principle in all communications"
+    ],
+    "forbidden_patterns": [
+      "modified-logotype",
+      "wrong-position",
+      "distorted-proportions"
+    ]
   }
 }
