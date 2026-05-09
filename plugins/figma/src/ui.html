@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* ─── Figma Plugin UI: 320px side panel ─────────────────────────── */
+    /* Quiet, dense, designer-grade. No chat. It's a tool. */
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 12px;
+      color: #333;
+      background: #fff;
+      overflow-y: auto;
+    }
+
+    .header {
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e5e5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header h1 {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111;
+    }
+
+    .score {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .score-value {
+      font-size: 24px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .score-value.good { color: #16a34a; }
+    .score-value.warning { color: #d97706; }
+    .score-value.bad { color: #dc2626; }
+
+    .score-label {
+      font-size: 10px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ─── Violations list ─────────────────────────────────────────── */
+
+    .violations {
+      padding: 8px 0;
+    }
+
+    .violation {
+      padding: 8px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .violation:hover {
+      background: #fafafa;
+    }
+
+    .severity {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+
+    .severity.error { background: #dc2626; }
+    .severity.warning { background: #d97706; }
+    .severity.info { background: #2563eb; }
+
+    .violation-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .violation-message {
+      font-size: 12px;
+      line-height: 1.4;
+      color: #333;
+    }
+
+    .violation-meta {
+      font-size: 10px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .fix-btn {
+      font-size: 11px;
+      padding: 3px 8px;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .fix-btn:hover {
+      background: #f5f5f5;
+      border-color: #ccc;
+    }
+
+    /* ─── Actions ─────────────────────────────────────────────────── */
+
+    .actions {
+      padding: 12px 16px;
+      border-top: 1px solid #e5e5e5;
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      background: #111;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover { background: #333; }
+    .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+
+    .btn-secondary {
+      padding: 8px 12px;
+      border: 1px solid #e5e5e5;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .empty-state {
+      padding: 40px 16px;
+      text-align: center;
+      color: #888;
+    }
+
+    .empty-state p {
+      margin-top: 8px;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Kyra</h1>
+    <div class="score" id="score-display" style="display: none;">
+      <div>
+        <div class="score-value" id="score-value">—</div>
+        <div class="score-label">Brand Score</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="content">
+    <div class="empty-state">
+      <div style="font-size: 20px;">🔵</div>
+      <p>Select elements and click<br><strong>Check Brand</strong> to validate</p>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-primary" id="btn-check" onclick="checkBrand()">Check Brand</button>
+    <button class="btn-secondary" id="btn-fix-all" onclick="fixAll()" style="display: none;">Fix All</button>
+  </div>
+
+  <script>
+    function checkBrand() {
+      parent.postMessage({ pluginMessage: { type: 'validate' } }, '*');
+      document.getElementById('btn-check').disabled = true;
+      document.getElementById('btn-check').textContent = 'Checking…';
+    }
+
+    function fixAll() {
+      parent.postMessage({ pluginMessage: { type: 'fix-all' } }, '*');
+    }
+
+    function fixViolation(id) {
+      parent.postMessage({ pluginMessage: { type: 'fix', violationId: id } }, '*');
+    }
+
+    window.onmessage = (event) => {
+      const msg = event.data.pluginMessage;
+      if (!msg) return;
+
+      if (msg.type === 'validation-result') {
+        renderResults(msg.data);
+      } else if (msg.type === 'error') {
+        renderError(msg.message);
+      } else if (msg.type === 'validating') {
+        document.getElementById('content').innerHTML =
+          '<div class="empty-state"><p>Validating…</p></div>';
+      }
+    };
+
+    function renderResults(data) {
+      const btn = document.getElementById('btn-check');
+      btn.disabled = false;
+      btn.textContent = 'Check Brand';
+
+      // Score
+      const scoreEl = document.getElementById('score-display');
+      const scoreVal = document.getElementById('score-value');
+      scoreEl.style.display = 'block';
+      scoreVal.textContent = data.score;
+      scoreVal.className = 'score-value ' +
+        (data.score >= 80 ? 'good' : data.score >= 50 ? 'warning' : 'bad');
+
+      // Violations
+      const content = document.getElementById('content');
+      if (data.violations.length === 0) {
+        content.innerHTML = '<div class="empty-state"><div style="font-size:20px">✅</div><p>All checks passed</p></div>';
+        document.getElementById('btn-fix-all').style.display = 'none';
+        return;
+      }
+
+      document.getElementById('btn-fix-all').style.display = 'block';
+
+      content.innerHTML = '<div class="violations">' +
+        data.violations.map(v => `
+          <div class="violation">
+            <div class="severity ${v.severity}"></div>
+            <div class="violation-content">
+              <div class="violation-message">${v.message}</div>
+              <div class="violation-meta">${v.category} · ${Math.round(v.confidence * 100)}% confidence</div>
+            </div>
+            ${v.autoFixable ? `<button class="fix-btn" onclick="fixViolation('${v.id}')">Fix</button>` : ''}
+          </div>
+        `).join('') +
+        '</div>';
+    }
+
+    function renderError(message) {
+      const btn = document.getElementById('btn-check');
+      btn.disabled = false;
+      btn.textContent = 'Check Brand';
+      document.getElementById('content').innerHTML =
+        `<div class="empty-state"><div style="font-size:20px">⚠️</div><p>${message}</p></div>`;
+    }
+  </script>
+</body>
+</html>
