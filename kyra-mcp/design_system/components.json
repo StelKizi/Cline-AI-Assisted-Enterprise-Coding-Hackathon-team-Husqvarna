@@ -1,7 +1,14 @@
 {
   "_specification": "Husqvarna Forest & Garden Web Design Specification",
   "_priority": "Husqvarna F&G rules take precedence over generic components",
-  "_critical_note": "All designs MUST comply with Husqvarna F&G spec - see FocusState, FunctionalColors, Typography, PageLayout, BrandAssets",
+  "_critical_requirements": [
+    "HUSQVARNA LOGO: Logotype stamp MUST appear in upper-left corner of all landing pages - NON-NEGOTIABLE",
+    "TYPOGRAPHY: ONLY Inter font allowed - no exceptions",
+    "COLORS: Functional colors ONLY for their defined purpose",
+    "BUTTONS: All buy-now/add-to-cart buttons MUST be Active Green",
+    "FOCUS: Every interactive element MUST have focus state",
+    "LAYOUT: 12-column grid, 4px base unit, mobile-first"
+  ],
 
   "Button": {
     "description": "Button component per Husqvarna F&G specification (REQUIRED)",
@@ -287,22 +294,33 @@
     ]
   },
   "BrandAssets": {
-    "description": "Brand asset application rules",
+    "description": "Brand asset application rules - CRITICAL REQUIREMENT",
+    "_MANDATORY": "Husqvarna logotype stamp MUST be present on all landing pages",
     "logotype_stamp": {
-      "placement": "Upper-left corner on landing pages",
-      "rule": "Always use logotype stamp treatment for unified recognition"
+      "placement": "Upper-left corner on landing pages - REQUIRED",
+      "rule": "Always use logotype stamp treatment for unified recognition",
+      "enforcement": "Missing logo is a CRITICAL FAILURE - design cannot be approved without it"
     },
     "hierarchy": "Brand → Industry → Product (in that priority order)",
     "critical_rules": [
+      "MUST display Husqvarna logotype stamp in upper-left corner",
       "Never alter, recolor, or reposition the logotype",
       "Never distort proportions",
       "Never substitute unofficial marks",
-      "Respect brand-hierarchy principle in all communications"
+      "Respect brand-hierarchy principle in all communications",
+      "Logo absence is grounds for immediate rejection"
     ],
     "forbidden_patterns": [
+      "no-logo",
       "modified-logotype",
       "wrong-position",
-      "distorted-proportions"
-    ]
+      "distorted-proportions",
+      "unofficial-marks"
+    ],
+    "validation": {
+      "required_elements": ["Husqvarna logotype stamp"],
+      "acceptable_positions": ["upper-left corner"],
+      "failure_if_missing": "CRITICAL - Design is non-compliant"
+    }
   }
 }
