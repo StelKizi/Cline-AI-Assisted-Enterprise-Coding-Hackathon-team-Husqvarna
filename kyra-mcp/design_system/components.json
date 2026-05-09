@@ -351,7 +351,8 @@
       "acceptable_sources": [
         "design_system/assets/image.webp",
         "design_system/assets/husqvarna-logotype.svg",
-        "design_system/assets/husqvarna-logotype.png"
+        "design_system/assets/husqvarna-logotype.png",
+        "design_system/assets/husqvarna-logotype.webp"
       ],
       "failure_if_missing": "CRITICAL - Design is non-compliant"
     }
