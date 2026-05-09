@@ -1,5 +1,14 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import {
+  BarChart3,
+  ShieldCheck,
+  Palette,
+  FileText,
+  Image,
+  ClipboardList,
+  Settings,
+} from "lucide-react";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -11,13 +20,13 @@ export const metadata: Metadata = {
 };
 
 const NAV = [
-  { label: "Activity", href: "/", icon: "📊" },
-  { label: "Compliance", href: "/compliance", icon: "🛡️" },
-  { label: "Tokens", href: "/tokens", icon: "🎨" },
-  { label: "Voice", href: "/voice", icon: "📋" },
-  { label: "Assets", href: "/assets", icon: "🖼️" },
-  { label: "Audit", href: "/audit", icon: "📝" },
-  { label: "Settings", href: "/settings", icon: "⚙️" },
+  { label: "Activity", href: "/", Icon: BarChart3 },
+  { label: "Compliance", href: "/compliance", Icon: ShieldCheck },
+  { label: "Tokens", href: "/tokens", Icon: Palette },
+  { label: "Voice", href: "/voice", Icon: FileText },
+  { label: "Assets", href: "/assets", Icon: Image },
+  { label: "Audit", href: "/audit", Icon: ClipboardList },
+  { label: "Settings", href: "/settings", Icon: Settings },
 ];
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -43,7 +52,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 href={item.href}
                 className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
               >
-                <span className="text-base">{item.icon}</span>
+                <item.Icon size={16} strokeWidth={1.75} />
                 {item.label}
               </a>
             ))}

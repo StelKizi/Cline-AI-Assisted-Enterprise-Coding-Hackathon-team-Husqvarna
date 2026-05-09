@@ -1,3 +1,4 @@
+import { CircleCheck, Circle } from "lucide-react";
 export default function SettingsPage() {
   return (
     <div className="p-8 max-w-2xl">
@@ -54,7 +55,7 @@ export default function SettingsPage() {
                 <span className={`text-xs font-medium ${
                   int.status === "connected" ? "text-green-600" : "text-gray-400"
                 }`}>
-                  {int.status === "connected" ? "● Connected" : "○ Not connected"}
+                  {int.status === "connected" ? (<><CircleCheck size={14} className="inline mr-1" /> Connected</>) : (<><Circle size={14} className="inline mr-1" /> Not connected</>)}
                 </span>
               </div>
             ))}

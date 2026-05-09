@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CheckCircle2, XCircle } from "lucide-react";
 
 // ─── Compliance Scorecard ───────────────────────────────────────────
 // Ported from Mark's kyra-dashboard — runs component code against the
@@ -153,7 +154,7 @@ export default function CompliancePage() {
                   check.passed ? "bg-green-50" : "bg-red-50"
                 }`}
               >
-                <span className="text-lg mt-0.5">{check.passed ? "✓" : "✗"}</span>
+                {check.passed ? <CheckCircle2 size={18} className="text-green-600 mt-0.5 flex-shrink-0" /> : <XCircle size={18} className="text-red-600 mt-0.5 flex-shrink-0" />}
                 <div>
                   <div
                     className={`text-sm font-medium ${
