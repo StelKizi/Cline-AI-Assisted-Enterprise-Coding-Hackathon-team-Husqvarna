@@ -287,13 +287,52 @@
     ]
   },
   "BrandAssets": {
-    "description": "Brand asset application rules",
+    "description": "Brand asset application rules - CRITICAL REQUIREMENT",
+    "_MANDATORY": "Husqvarna logotype stamp MUST be present on all landing pages",
+    "assets": {
+      "primary": "design_system/assets/image.webp",
+      "svg_preferred": "design_system/assets/husqvarna-logotype.svg",
+      "fallback": "design_system/assets/husqvarna-logotype.png",
+      "note": "Currently using WebP. SVG is ideal for scalability if available."
+    },
+    "formats": {
+      "webp": {
+        "description": "CURRENT format - modern web format with excellent compression",
+        "benefits": [
+          "Superior compression (smaller file size than PNG)",
+          "Supports transparency",
+          "Widely supported in modern browsers"
+        ],
+        "current_file": "image.webp"
+      },
+      "svg": {
+        "description": "IDEAL format - vector format for perfect scalability",
+        "benefits": [
+          "Scalable without quality loss",
+          "Smallest file size for simple graphics",
+          "Sharp at any resolution",
+          "Recommended when available"
+        ]
+      },
+      "png": {
+        "description": "FALLBACK format - use for legacy browser support",
+        "requirements": [
+          "Minimum 512px width",
+          "Transparent background",
+          "High resolution (2x for retina)"
+        ]
+      }
+    },
     "logotype_stamp": {
-      "placement": "Upper-left corner on landing pages",
-      "rule": "Always use logotype stamp treatment for unified recognition"
+      "placement": "Upper-left corner on landing pages - REQUIRED",
+      "rule": "Always use logotype stamp treatment for unified recognition",
+      "enforcement": "Missing logo is a CRITICAL FAILURE - design cannot be approved without it",
+      "implementation": "Load from assets directory - never use external CDN or third-party sources"
     },
     "hierarchy": "Brand → Industry → Product (in that priority order)",
     "critical_rules": [
+      "MUST display Husqvarna logotype stamp in upper-left corner",
+      "MUST load from official assets directory (design_system/assets/brand/)",
       "Never alter, recolor, or reposition the logotype",
       "Never distort proportions",
       "Never substitute unofficial marks",
@@ -302,7 +341,19 @@
     "forbidden_patterns": [
       "modified-logotype",
       "wrong-position",
-      "distorted-proportions"
-    ]
+      "distorted-proportions",
+      "unofficial-marks",
+      "external-logo-sources"
+    ],
+    "validation": {
+      "required_elements": ["Husqvarna logotype stamp"],
+      "acceptable_positions": ["upper-left corner"],
+      "acceptable_sources": [
+        "design_system/assets/image.webp",
+        "design_system/assets/husqvarna-logotype.svg",
+        "design_system/assets/husqvarna-logotype.png"
+      ],
+      "failure_if_missing": "CRITICAL - Design is non-compliant"
+    }
   }
 }
