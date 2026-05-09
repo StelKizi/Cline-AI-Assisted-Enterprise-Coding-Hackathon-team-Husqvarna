@@ -1,0 +1,12 @@
+{
+  "name": "Kyra Brand Intelligence",
+  "id": "kyra-brand-intelligence",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["*"],
+    "reasoning": "Kyra needs to communicate with the Brand Core API for validation and transformation"
+  }
+}

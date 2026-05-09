@@ -13,3 +13,11 @@ kyra-dashboard/node_modules/
 
 # Editor / local tools
 .claude/
+
+# Node / TypeScript monorepo
+node_modules/
+dist/
+.next/
+.turbo/
+*.tsbuildinfo
+.env.local

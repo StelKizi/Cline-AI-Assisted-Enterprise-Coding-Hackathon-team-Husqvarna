@@ -1,0 +1,24 @@
+{
+  "name": "kyra",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Brand intelligence platform — API-first brand state management with validation, transformation, and grounding",
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "plugins/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "api:dev": "npm run dev --workspace=apps/api",
+    "console:dev": "npm run dev --workspace=apps/console",
+    "mcp:dev": "npm run dev --workspace=apps/mcp-server"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.0",
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0"
+  }
+}
