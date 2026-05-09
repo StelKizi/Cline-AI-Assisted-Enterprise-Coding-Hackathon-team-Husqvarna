@@ -18,7 +18,15 @@
       "padding=",
       "margin="
     ],
-    "allowed_props": ["variant", "size", "disabled", "onClick", "children", "type", "className"],
+    "allowed_props": [
+      "variant",
+      "size",
+      "disabled",
+      "onClick",
+      "children",
+      "type",
+      "className"
+    ],
     "examples": {
       "correct": "<Button variant=\"primary\" size=\"md\">Submit</Button>",
       "incorrect": "<button style=\"background:#FF5733; padding:10px\">Submit</button>"
@@ -36,13 +44,18 @@
       "color.brand.primary"
     ],
     "required_props": ["variant"],
-    "forbidden_patterns": [
-      "style=",
-      "border=",
-      "color=#",
-      "color=rgb"
+    "forbidden_patterns": ["style=", "border=", "color=#", "color=rgb"],
+    "allowed_props": [
+      "variant",
+      "size",
+      "placeholder",
+      "value",
+      "onChange",
+      "disabled",
+      "label",
+      "errorMessage",
+      "className"
     ],
-    "allowed_props": ["variant", "size", "placeholder", "value", "onChange", "disabled", "label", "errorMessage", "className"],
     "examples": {
       "correct": "<Input variant=\"default\" size=\"md\" placeholder=\"Enter email\" />",
       "incorrect": "<input style=\"border: 1px solid red\" placeholder=\"Enter email\" />"
@@ -68,6 +81,69 @@
     "examples": {
       "correct": "<Card variant=\"elevated\" size=\"md\">content</Card>",
       "incorrect": "<div style=\"background:#fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1)\">content</div>"
+    }
+  },
+  "Heading": {
+    "description": "Typography component for headings and titles",
+    "allowed_variants": ["h1", "h2", "h3", "h4", "h5", "h6"],
+    "allowed_sizes": ["xs", "sm", "md", "lg", "xl", "2xl"],
+    "allowed_color_tokens": [
+      "color.husqvarna.primary",
+      "color.husqvarna.secondary",
+      "color.neutral.800",
+      "color.neutral.900",
+      "color.neutral.0"
+    ],
+    "required_props": ["level"],
+    "forbidden_patterns": [
+      "style=",
+      "fontSize=",
+      "fontWeight=",
+      "lineHeight=",
+      "color=#",
+      "color=rgb"
+    ],
+    "allowed_props": ["level", "size", "children", "className", "as"],
+    "examples": {
+      "correct": "<Heading level=\"h1\" size=\"2xl\">Main Title</Heading>",
+      "incorrect": "<h1 style=\"font-size:48px; font-weight:700\">Main Title</h1>"
+    },
+    "design_specs": {
+      "h1": "48px / 700 / 48px line-height",
+      "h2": "48px / 700 / 48px line-height",
+      "h3": "18px / 700 / 24px line-height",
+      "h4": "14px / 600 / 21px line-height"
+    }
+  },
+  "Link": {
+    "description": "Navigational link component",
+    "allowed_variants": ["primary", "secondary", "underlined", "plain"],
+    "allowed_sizes": ["sm", "md", "lg"],
+    "allowed_color_tokens": [
+      "color.husqvarna.primary",
+      "color.husqvarna.secondary",
+      "color.neutral.600",
+      "color.neutral.0"
+    ],
+    "required_props": ["href"],
+    "forbidden_patterns": [
+      "style=",
+      "color=#",
+      "color=rgb",
+      "text-decoration="
+    ],
+    "allowed_props": [
+      "href",
+      "variant",
+      "size",
+      "children",
+      "target",
+      "rel",
+      "className"
+    ],
+    "examples": {
+      "correct": "<Link href=\"/products\" variant=\"primary\">View Products</Link>",
+      "incorrect": "<a href=\"/products\" style=\"color:#273A60; text-decoration:underline\">View Products</a>"
     }
   }
 }
