@@ -4,6 +4,8 @@
 import type { ValidateRequest, Violation } from "@kyra/brand-core";
 import { v4 as uuid } from "uuid";
 
+import { getApprovedColors } from "../brand-state.js";
+
 const HEX_REGEX = /#[0-9a-fA-F]{3,8}\b/g;
 
 export async function checkColors(req: ValidateRequest): Promise<Violation[]> {
@@ -13,8 +15,8 @@ export async function checkColors(req: ValidateRequest): Promise<Violation[]> {
     return violations;
   }
 
-  // TODO: Fetch approved palette from brand state
-  const approvedColors = new Set<string>(); // will be populated from tokens
+  // Fetch approved palette from brand state
+  const approvedColors = getApprovedColors();
 
   const matches = req.artifact.content.matchAll(HEX_REGEX);
   for (const match of matches) {

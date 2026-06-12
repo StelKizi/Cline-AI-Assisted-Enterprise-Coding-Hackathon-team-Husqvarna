@@ -12,7 +12,7 @@ app = FastAPI(title="Kyra API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "http://localhost:3838"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -63,10 +63,15 @@ def scorecard(req: ScorecardRequest):
     fixes = [l.replace("→ ", "") for l in lines if l.startswith("→")]
 
     return {
-        "status": status,
-        "passed": passed,
-        "total": total,
-        "checks": checks,
+        "component": req.component_name,
+        "score": int((passed / total) * 100) if total > 0 else 0,
+        "checks": [
+            {
+                "check": c.replace("✓ ", "").replace("✗ ", "").strip(),
+                "passed": c.startswith("✓"),
+                "details": "Requirement check"
+            } for c in checks
+        ],
         "fixes": fixes,
         "raw": raw,
     }

@@ -1,0 +1,34 @@
+{
+  "pages": [
+    "https://www.husqvarna.com/se/",
+    "https://www.husqvarna.com/se/robotgrasklippare/",
+    "https://www.husqvarna.com/se/motorsagar/"
+  ],
+  "assets": [
+    {
+      "name": "people-and-lifestyle-ch-635665.webp",
+      "category": "hero",
+      "url": "https://www-static-nw.husqvarna.com/-/images/aprimo/husqvarna/robotic-mowers/photos/people-and-lifestyle/ch-635665.webp?v=f7900a1b8427f33c&format=WEBP_LANDSCAPE_COVER_XXL"
+    },
+    {
+      "name": "automower-aspire-r6v.webp",
+      "category": "products",
+      "url": "https://www-static-nw.husqvarna.com/-/images/aprimo/husqvarna/robotic-mowers/photos/studio/j/jk/jk-127179.webp?v=d66a6052c7ea9f44&format=WEBP_SQUARE_CONTAIN_LG"
+    },
+    {
+      "name": "550i-xp-chainsaw.webp",
+      "category": "products",
+      "url": "https://www-static-nw.husqvarna.com/-/images/aprimo/husqvarna/chainsaws/photos/action/x/xh/xh-047773.webp?v=99363159e9cc1198&format=WEBP_PORTRAIT_COVER_LG"
+    },
+    {
+      "name": "robotic-mower-accessories-vs-156023.webp",
+      "category": "reference",
+      "url": "https://www-static-nw.husqvarna.com/-/images/aprimo/husqvarna/robotic-mower-accessories/photos/action/vs-156023.webp?v=980ba5248427f33c&format=WEBP_LANDSCAPE_COVER_XXL"
+    },
+    {
+      "name": "robotic-mower-studio-h310-1892.webp",
+      "category": "reference",
+      "url": "https://www-static-nw.husqvarna.com/-/images/aprimo/husqvarna/robotic-mowers/photos/studio/h/h310/18/h310-1892.webp?v=4c17bc45e00e823d&format=WEBP_LANDSCAPE_CONTAIN_MD"
+    }
+  ]
+}
