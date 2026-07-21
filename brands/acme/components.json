@@ -1,0 +1,48 @@
+{
+  "_specification": "Acme Corp Component Specification",
+  "Button": {
+    "description": "Acme system Button component",
+    "allowed_variants": ["primary", "secondary", "ghost", "danger"],
+    "allowed_sizes": ["sm", "md", "lg"],
+    "allowed_color_tokens": [
+      "color.brand.primary",
+      "color.brand.secondary",
+      "color.functional.error",
+      "color.neutral.0"
+    ],
+    "required_props": ["variant"],
+    "forbidden_patterns": [
+      "style=",
+      "backgroundColor=",
+      "className=\"btn\""
+    ],
+    "examples": {
+      "correct": "<Button variant=\"primary\" size=\"md\">Get Started</Button>",
+      "incorrect": "<button style=\"background:#6366F1\">Get Started</button>"
+    }
+  },
+  "Card": {
+    "description": "Acme Card component container",
+    "allowed_variants": ["elevated", "flat", "outlined"],
+    "required_props": ["variant"],
+    "forbidden_patterns": [
+      "style="
+    ],
+    "examples": {
+      "correct": "<Card variant=\"elevated\">Content</Card>",
+      "incorrect": "<div style=\"border: 1px solid #ccc\">Content</div>"
+    }
+  },
+  "Input": {
+    "description": "Acme Form Input field component",
+    "allowed_variants": ["standard", "filled"],
+    "required_props": ["name", "label"],
+    "forbidden_patterns": [
+      "style="
+    ],
+    "examples": {
+      "correct": "<Input name=\"email\" label=\"Email Address\" />",
+      "incorrect": "<input type=\"text\" placeholder=\"Email\" />"
+    }
+  }
+}

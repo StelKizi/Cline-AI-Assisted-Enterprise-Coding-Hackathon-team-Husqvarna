@@ -1,37 +1,77 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI assistants working with code in this repository.
 
-## Project
+## Project: Kyra (Brand Intelligence Platform)
 
-MCP server practice repo. Currently contains one project: `Cline-AI-Assisted-Enterprise-Coding-Hackathon-team-Husqvarna/` — a FastMCP weather server wrapping the US National Weather Service API.
+Kyra is an API-first, **brand-agnostic** brand state management and compliance engine with MCP (Model Context Protocol) integration.
 
-## Commands
+### Core Capabilities
+- **Brand Agnostic Architecture**: Accepts any brand guidelines defined as JSON schemas (`tokens.json` & `components.json`) under `brands/<brand-name>/` or via `KYRA_BRAND_DIR`.
+- **MCP Servers**: Python FastMCP (`kyra-mcp`) and Node.js MCP (`apps/mcp-server`) for AI agent integration.
+- **REST API**: Hono REST API (`apps/api`) providing `/validate`, `/transform`, `/ground`, and `/brands` endpoints.
+- **Dashboard Console**: Next.js 16 app (`apps/console`) for compliance scorecards and token browsing.
 
-All commands run from the project subdirectory (e.g. `Cline-AI-Assisted-Enterprise-Coding-Hackathon-team-Husqvarna/`).
+---
+
+## Commands & Setup
+
+### Python Compliance Engine (`kyra-mcp`)
 
 ```bash
-# Install deps
+cd kyra-mcp
+
+# Install dependencies
 uv sync
 
-# Run MCP server (stdio transport)
+# Run Python MCP server (stdio transport for Claude Desktop / Cursor)
 uv run python main.py
 
-# Run as MCP dev server (with inspector)
-uv run mcp dev main.py
-
-# Install into Claude Desktop
-uv run mcp install main.py
+# Run FastAPI compliance server (HTTP endpoint at http://localhost:8000)
+uv run python api.py
 ```
 
-Python version: 3.14 (managed via `.python-version`). Package manager: `uv`.
+### TypeScript Workspace & Server (`apps/mcp-server`, `apps/api`, `apps/console`)
 
-## Architecture
+```bash
+# Root directory
+npm install
 
-`main.py` is the entire server. Pattern: `FastMCP` instance → `@mcp.tool()` decorators → `mcp.run(transport="stdio")`.
+# Run REST API (:3737)
+npm run api:dev
 
-Tool flow for `get_forecast`: NWS `/points/{lat},{lon}` → extract `forecast` URL → fetch periods → return top 5.
+# Run Console (:3838)
+npm run console:dev
 
-`make_nws_request` is shared async helper; swallows all exceptions and returns `None` on failure — callers check for `None`.
+# Run Node.js MCP server
+npm run mcp:dev
+```
 
-Transport is stdio (Claude Desktop / MCP client launches the process).
+---
+
+## Brand Selection & Dynamic Loading
+
+Kyra dynamically loads brands based on:
+1. `KYRA_BRAND_DIR`: Explicit folder path to brand design tokens & component contracts.
+2. `KYRA_BRAND`: Name of folder inside `brands/` (e.g. `KYRA_BRAND=acme` or `KYRA_BRAND=husqvarna`).
+3. Tool parameter: `brand` passed in tool invocation (e.g. `run_compliance_scorecard(component_name="Button", code="...", brand="acme")`).
+
+---
+
+## Repository Structure
+
+```
+├── brands/                 # Multi-brand specifications (acme, husqvarna, custom)
+│   ├── acme/               # Example Acme brand spec
+│   └── husqvarna/          # Husqvarna Forest & Garden brand spec
+├── kyra-mcp/               # Python FastMCP server & compliance engine
+│   ├── main.py             # FastMCP stdio server
+│   ├── api.py              # FastAPI HTTP server (:8000)
+│   └── design_system/      # Default design system fallback
+├── apps/
+│   ├── api/                # Hono REST API server (:3737)
+│   ├── mcp-server/         # TypeScript stdio MCP server
+│   └── console/            # Next.js 16 management dashboard (:3838)
+└── packages/
+    └── brand-core/         # Zod schemas for W3C tokens & brand rules
+```
