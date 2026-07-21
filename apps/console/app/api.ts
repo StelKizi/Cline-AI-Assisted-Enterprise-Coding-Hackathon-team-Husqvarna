@@ -1,9 +1,9 @@
-const API_BASE = "http://localhost:3737/api/v1";
-export const BRAND_ID = "d3b07384-d113-4ec5-a5d7-e0e6355e005c";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3737/api/v1";
+export const BRAND_ID = process.env.NEXT_PUBLIC_BRAND_ID || "acme";
 
-export async function fetchBrand() {
+export async function fetchBrand(brandId: string = BRAND_ID) {
   try {
-    const res = await fetch(`${API_BASE}/brands/${BRAND_ID}`, {
+    const res = await fetch(`${API_BASE}/brands/${brandId}`, {
       headers: { "X-API-Key": "kyra-dev-key" },
       next: { revalidate: 0 },
     });
@@ -11,24 +11,24 @@ export async function fetchBrand() {
     return await res.json();
   } catch (err) {
     return {
-      id: BRAND_ID,
-      organizationId: "b02008fb-b8cc-4d3f-b883-7c87c71e21b2",
-      name: "Kyra Brand (Standalone)",
-      slug: "kyra",
+      id: brandId,
+      organizationId: "org-acme-99",
+      name: "Acme Corporation",
+      slug: "acme",
       description: "Brand intelligence platform — API-first brand state management",
-      plan: "enterprise",
+      plan: "professional",
       apiCallsThisMonth: 12450,
       apiCallsLimit: 50000,
       status: "active",
       createdAt: "2026-01-01T00:00:00Z",
-      updatedAt: "2026-06-12T08:00:00Z",
+      updatedAt: new Date().toISOString(),
     };
   }
 }
 
-export async function fetchTokens() {
+export async function fetchTokens(brandId: string = BRAND_ID) {
   try {
-    const res = await fetch(`${API_BASE}/brands/${BRAND_ID}/tokens`, {
+    const res = await fetch(`${API_BASE}/brands/${brandId}/tokens`, {
       headers: { "X-API-Key": "kyra-dev-key" },
       next: { revalidate: 0 },
     });
@@ -36,30 +36,30 @@ export async function fetchTokens() {
     return await res.json();
   } catch (err) {
     return {
-      id: "273c52e4-e0eb-48b0-811c-99d821be005c",
-      brandId: BRAND_ID,
+      id: `tokens-${brandId}`,
+      brandId: brandId,
       name: "default",
-      version: "1.2.0",
+      version: "1.0.0",
       groups: {
         color: {
           $description: "Brand color palette tokens",
           tokens: {
-            "primary-600": { $type: "color", $value: "#6366f1" },
-            "primary-700": { $type: "color", $value: "#4f46e5" },
-            "neutral-900": { $type: "color", $value: "#111827" },
-            "neutral-100": { $type: "color", $value: "#f3f4f6" },
+            "primary": { $type: "color", $value: "#6366f1", $description: "Primary brand accent" },
+            "secondary": { $type: "color", $value: "#ec4899", $description: "Secondary brand accent" },
+            "neutral-900": { $type: "color", $value: "#111827", $description: "Text dark neutral color" },
+            "neutral-100": { $type: "color", $value: "#f3f4f6", $description: "Background light neutral color" },
           },
         },
       },
-      publishedAt: "2026-05-15T10:00:00Z",
+      publishedAt: new Date().toISOString(),
       publishedBy: "Design System Bot",
     };
   }
 }
 
-export async function fetchVoice() {
+export async function fetchVoice(brandId: string = BRAND_ID) {
   try {
-    const res = await fetch(`${API_BASE}/brands/${BRAND_ID}/voice`, {
+    const res = await fetch(`${API_BASE}/brands/${brandId}/voice`, {
       headers: { "X-API-Key": "kyra-dev-key" },
       next: { revalidate: 0 },
     });
@@ -67,9 +67,9 @@ export async function fetchVoice() {
     return await res.json();
   } catch (err) {
     return {
-      id: "3e5a32ec-1f12-42da-92ee-91e82bc5005c",
-      brandId: BRAND_ID,
-      version: "2.1.0",
+      id: `voice-${brandId}`,
+      brandId: brandId,
+      version: "1.0.0",
       approvedVocabulary: [
         { term: "brand core", preferred: true },
         { term: "compliance", preferred: true },
@@ -79,21 +79,21 @@ export async function fetchVoice() {
         { term: "bag of vectors", reason: "Avoid technical slang", alternatives: ["embeddings"] },
       ],
       defaultTone: [
-        { dimension: "formality", value: 0.7 },
+        { dimension: "formality", value: 0.8 },
         { dimension: "enthusiasm", value: 0.5 },
-        { dimension: "directness", value: 0.8 },
+        { dimension: "directness", value: 0.9 },
       ],
       channelOverrides: [],
       requiredDisclaimers: [],
-      publishedAt: "2026-05-18T14:30:00Z",
+      publishedAt: new Date().toISOString(),
       publishedBy: "Content Governance Team",
     };
   }
 }
 
-export async function fetchAssets() {
+export async function fetchAssets(brandId: string = BRAND_ID) {
   try {
-    const res = await fetch(`${API_BASE}/brands/${BRAND_ID}/assets`, {
+    const res = await fetch(`${API_BASE}/brands/${brandId}/assets`, {
       headers: { "X-API-Key": "kyra-dev-key" },
       next: { revalidate: 0 },
     });
@@ -104,9 +104,9 @@ export async function fetchAssets() {
   }
 }
 
-export async function fetchAudit() {
+export async function fetchAudit(brandId: string = BRAND_ID) {
   try {
-    const res = await fetch(`${API_BASE}/brands/${BRAND_ID}/audit`, {
+    const res = await fetch(`${API_BASE}/brands/${brandId}/audit`, {
       headers: { "X-API-Key": "kyra-dev-key" },
       next: { revalidate: 0 },
     });

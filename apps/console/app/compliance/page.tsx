@@ -2,10 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle2, XCircle } from "lucide-react";
-
-// ─── Compliance Scorecard ───────────────────────────────────────────
-// Ported from Mark's kyra-dashboard — runs component code against the
-// design-system compliance engine (Python FastMCP → FastAPI on :8000).
+import { BRAND_ID } from "../api";
 
 const COMPONENTS = ["Button", "Input", "Card"];
 
@@ -19,12 +16,13 @@ interface ScorecardResult {
   component: string;
   score: number;
   checks: CheckResult[];
+  fixes?: string[];
 }
 
 export default function CompliancePage() {
   const [component, setComponent] = useState("Button");
   const [code, setCode] = useState(
-    `<button className="bg-blue-500 text-white px-4 py-2 rounded-md">\n  Click me\n</button>`
+    `<Button variant="primary">Submit</Button>`
   );
   const [result, setResult] = useState<ScorecardResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -38,7 +36,7 @@ export default function CompliancePage() {
       const res = await fetch("http://localhost:8000/compliance-scorecard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ component_name: component, code }),
+        body: JSON.stringify({ component_name: component, code, brand: BRAND_ID }),
       });
       if (!res.ok) throw new Error(`API returned ${res.status}`);
       const data: ScorecardResult = await res.json();
@@ -55,7 +53,7 @@ export default function CompliancePage() {
       <div className="mb-8 animate-fade-in">
         <h1 className="text-2xl font-semibold text-gray-900">Compliance Scorecard</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Validate component code against the design system spec
+          Validate component code against the brand design system spec
         </p>
       </div>
 
@@ -101,7 +99,7 @@ export default function CompliancePage() {
         <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 mb-6 text-sm animate-fade-in">
           <strong>Error:</strong> {error}
           <p className="text-red-500 mt-1 text-xs">
-            Make sure the MCP API is running on localhost:8000
+            Make sure the Python Compliance API is running on localhost:8000 (cd kyra-mcp && uv run python api.py)
           </p>
         </div>
       )}
@@ -120,60 +118,48 @@ export default function CompliancePage() {
                   : "text-red-600"
               }`}
             >
-              {result.score}
+              {result.score}%
             </div>
             <div>
-              <div className="text-sm font-semibold text-gray-700">{result.component}</div>
-              <div className="text-xs text-gray-500">
-                {result.checks.filter((c) => c.passed).length}/{result.checks.length} checks passed
-              </div>
-            </div>
-            {/* Score bar */}
-            <div className="flex-1 ml-4">
-              <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full animate-bar-fill ${
-                    result.score >= 80
-                      ? "bg-green-500"
-                      : result.score >= 50
-                      ? "bg-yellow-500"
-                      : "bg-red-500"
-                  }`}
-                  style={{ width: `${result.score}%` }}
-                />
-              </div>
+              <p className="font-semibold text-gray-900">
+                Compliance Score — {result.component}
+              </p>
+              <p className="text-xs text-gray-500">
+                {result.score >= 80 ? "Passes brand contract" : "Requires fixes to meet brand guidelines"}
+              </p>
             </div>
           </div>
 
           {/* Checks list */}
-          <div className="space-y-3">
-            {result.checks.map((check, i) => (
-              <div
-                key={i}
-                className={`flex items-start gap-3 p-3 rounded-lg ${
-                  check.passed ? "bg-green-50" : "bg-red-50"
-                }`}
-              >
-                {check.passed ? <CheckCircle2 size={18} className="text-green-600 mt-0.5 flex-shrink-0" /> : <XCircle size={18} className="text-red-600 mt-0.5 flex-shrink-0" />}
+          <div className="space-y-3 border-t border-gray-100 pt-4">
+            {result.checks.map((c, i) => (
+              <div key={i} className="flex items-start gap-3 text-sm">
+                {c.passed ? (
+                  <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+                ) : (
+                  <XCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                )}
                 <div>
-                  <div
-                    className={`text-sm font-medium ${
-                      check.passed ? "text-green-800" : "text-red-800"
-                    }`}
-                  >
-                    {check.check}
-                  </div>
-                  <div
-                    className={`text-xs mt-0.5 ${
-                      check.passed ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {check.details}
-                  </div>
+                  <span className={c.passed ? "text-gray-800" : "text-red-700 font-medium"}>
+                    {c.check}
+                  </span>
                 </div>
               </div>
             ))}
           </div>
+
+          {result.fixes && result.fixes.length > 0 && (
+            <div className="mt-6 border-t border-gray-100 pt-4">
+              <p className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">Required Fixes</p>
+              <ul className="space-y-1">
+                {result.fixes.map((fix, idx) => (
+                  <li key={idx} className="text-xs text-red-600 font-mono">
+                    → {fix}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>
