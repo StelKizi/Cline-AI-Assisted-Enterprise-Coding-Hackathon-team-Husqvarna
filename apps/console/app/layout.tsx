@@ -8,6 +8,7 @@ import {
   Image,
   ClipboardList,
   Settings,
+  Sparkles,
 } from "lucide-react";
 import "./globals.css";
 
@@ -21,6 +22,7 @@ export const metadata: Metadata = {
 
 const NAV = [
   { label: "Activity", href: "/", Icon: BarChart3 },
+  { label: "Brand Place", href: "/brand", Icon: Sparkles },
   { label: "Compliance", href: "/compliance", Icon: ShieldCheck },
   { label: "Tokens", href: "/tokens", Icon: Palette },
   { label: "Voice", href: "/voice", Icon: FileText },

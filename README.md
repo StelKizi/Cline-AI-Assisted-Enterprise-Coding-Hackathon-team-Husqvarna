@@ -1,101 +1,167 @@
 # Kyra — Brand Intelligence Platform
 
-> API-first brand state management with validation, transformation, and AI grounding.
+> API-first, **brand-agnostic** brand state management with validation, transformation, compliance checks, and AI grounding.
 
-Kyra treats **brand guidelines as structured, versionable state** — not PDFs. Every color, voice rule, and asset lives in a typed schema that any tool can query and validate against.
+Kyra treats **brand guidelines as structured, versionable state** — not static PDFs. Any company or design team can input their brand specs, and any AI tool or agent can query, ground, and validate UI component code or brand artifacts against those guidelines via the Model Context Protocol (MCP) or REST API.
 
-## Architecture
+---
+
+## 🚀 Brand Agnostic Engine
+
+Kyra is 100% brand-agnostic. The validation engine and MCP servers accept **any brand input**.
+
+### 1. Structure Your Brand State
+Place your brand specification inside `brands/<your-brand-name>/`:
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                    Brand Core                       │
-│  W3C Design Tokens · Voice Rules · Asset Registry   │
-│  Component Patterns · Policies · Audit Log          │
-└──────────────┬──────────────────┬───────────────────┘
-               │                  │
-        ┌──────▼──────┐   ┌──────▼──────┐
-        │  REST API   │   │  MCP Server │
-        │  (Hono)     │   │  (stdio)    │
-        │  :3737      │   │             │
-        └──────┬──────┘   └──────┬──────┘
-               │                  │
-     ┌─────────┼─────────┐       │
-     ▼         ▼         ▼       ▼
-  Console   Figma     CI/CD    Claude /
-  (Next.js) Plugin    Actions  Any LLM
-  :3838
+brands/
+├── acme/                  # Example Acme brand
+│   ├── tokens.json        # W3C Design Tokens (colors, spacing, typography)
+│   └── components.json    # Component specs & compliance contracts
+├── husqvarna/             # Husqvarna Forest & Garden spec
+│   ├── tokens.json
+│   └── components.json
+└── your-brand/            # Create your own custom brand!
+    ├── tokens.json
+    └── components.json
 ```
 
-## Packages
+### 2. Configure Active Brand
+You can select a brand in 3 easy ways:
+- **Environment Variable**: Set `KYRA_BRAND=acme` or `KYRA_BRAND_DIR=/path/to/custom/brand`
+- **MCP Tool Argument**: Pass `brand="acme"` or `brand="husqvarna"` directly when invoking MCP tools
+- **REST API Header / Parameter**: Request `/v1/brands/acme/tokens` or pass `brandId`
+
+---
+
+## 🔌 Setting Up the MCP Server
+
+Anyone cloning or viewing this repository can set up the MCP server in seconds for **Claude Desktop**, **Cursor**, **VS Code**, or **Cline**.
+
+### Option A: Python FastMCP Server (`kyra-mcp`)
+
+1. **Install dependencies**:
+   ```bash
+   cd kyra-mcp && uv sync
+   ```
+
+2. **Run locally**:
+   ```bash
+   uv run python main.py
+   ```
+
+3. **Configure in Claude Desktop / Cursor (`claude_desktop_config.json`)**:
+   ```json
+   {
+     "mcpServers": {
+       "kyra-mcp": {
+         "command": "uv",
+         "args": [
+           "--directory",
+           "/absolute/path/to/kyra/kyra-mcp",
+           "run",
+           "python",
+           "main.py"
+         ],
+         "env": {
+           "KYRA_BRAND": "acme"
+         }
+       }
+     }
+   }
+   ```
+
+### Option B: TypeScript MCP Server (`apps/mcp-server`)
+
+1. **Install & Build**:
+   ```bash
+   npm install && npm run build
+   ```
+
+2. **Configure in Claude Desktop / Cursor (`claude_desktop_config.json`)**:
+   ```json
+   {
+     "mcpServers": {
+       "kyra-brand": {
+         "command": "node",
+         "args": [
+           "/absolute/path/to/kyra/apps/mcp-server/dist/index.js"
+         ],
+         "env": {
+           "KYRA_API_URL": "http://localhost:3737/api/v1",
+           "KYRA_BRAND": "acme"
+         }
+       }
+     }
+   }
+   ```
+
+---
+
+## 🛠️ Architecture
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                           Brand Core                             │
+│       W3C Design Tokens · Dynamic Brand Input · Asset Registry    │
+│            Component Patterns · Compliance Rules                 │
+└────────────────┬────────────────────────────────┬────────────────┘
+                 │                                │
+          ┌──────▼──────┐                  ┌──────▼──────┐
+          │  REST API   │                  │  MCP Server │
+          │  (Hono)     │                  │  (stdio)    │
+          │  :3737      │                  │             │
+          └──────┬──────┘                  └──────┬──────┘
+                 │                                │
+       ┌─────────┼─────────┐                      │
+       ▼         ▼         ▼                      ▼
+    Console   Figma     CI/CD                 Claude /
+   (Next.js) Plugin    Actions               Any LLM Agent
+   :3838
+```
+
+---
+
+## 📦 Packages & Repositories
 
 | Package | Description |
 |---|---|
-| `packages/brand-core` | Zod schemas for tokens, voice, assets, patterns, policies, audit |
-| `apps/api` | Hono REST API — `/validate`, `/transform`, `/ground` |
-| `apps/mcp-server` | Model Context Protocol server (6 tools) for AI agent integration |
-| `apps/console` | Next.js dashboard — activity, compliance scorecard, token browser |
-| `plugins/figma` | Figma plugin — real-time brand validation on canvas |
-| `kyra-mcp` | Python FastMCP server with compliance engine (Mark's contribution) |
+| `brands/` | Brand state directory (`acme`, `husqvarna`, custom brands) |
+| `kyra-mcp` | Brand-agnostic Python FastMCP server & compliance engine |
+| `apps/mcp-server` | Node.js MCP server (7 tools) wrapping the REST API |
+| `apps/api` | Hono REST API — `/validate`, `/transform`, `/ground`, `/brands` |
+| `packages/brand-core` | Zod schemas for tokens, voice, assets, patterns, policies |
+| `apps/console` | Next.js dashboard — compliance scorecard, token browser, live feed |
 
-## Quick Start
+---
+
+## ⚡ Quick Start Commands
 
 ```bash
-# Install dependencies
+# Install all dependencies
 npm install
 
-# Start the REST API
-npm run api:dev        # → http://localhost:3737
+# Start the Hono REST API (Port 3737)
+npm run api:dev
 
-# Start the console
-npm run console:dev    # → http://localhost:3838
+# Start Next.js Console (Port 3838)
+npm run console:dev
 
-# Start Mark's Python compliance API
-cd kyra-mcp && uv run python api.py   # → http://localhost:8000
+# Start Python Compliance API (Port 8000)
+cd kyra-mcp && uv run python api.py
 
-# Use the MCP server (stdio — connect from Claude Desktop, Cursor, etc.)
+# Start stdio MCP Server for AI Agents
 npm run mcp:dev
 ```
 
-## Key Endpoints
+---
 
-### REST API (`:3737`)
-- `POST /v1/validate` — Run artifact through checker pipeline, get scored violations
-- `POST /v1/transform` — Auto-fix violations (recolor, rewrite voice, etc.)
-- `POST /v1/ground` — Generate system prompt for AI tools with brand context
+## 🛠️ Key MCP Tools
 
-### MCP Server (stdio)
-- `validate_artifact` — Brand-check any content
-- `transform_artifact` — Auto-fix brand violations
-- `get_brand_context` — Full brand state for grounding
-- `lookup_token` — Query specific design tokens
-- `find_asset` — Search asset registry
-- `get_voice_rules` — Voice & tone rules for a channel
-
-### Python Compliance API (`:8000`)
-- `POST /compliance-scorecard` — Run component code against design system spec
-
-## Console Pages
-
-| Route | Page |
-|---|---|
-| `/` | Activity — validation stats, drift reports, live feed |
-| `/compliance` | Compliance Scorecard — component validation against design system |
-| `/tokens` | Design Tokens — color, spacing, typography browser |
-| `/voice` | Voice & Tone — vocabulary rules, tone parameters |
-| `/assets` | Assets — managed brand assets with approval workflow |
-| `/audit` | Audit Log — every Brand Core change, timestamped |
-| `/settings` | Settings — API keys, plan usage, integrations |
-
-## Tech Stack
-
-- **Monorepo**: npm workspaces + Turborepo
-- **Schemas**: Zod (TypeScript) — W3C Design Token format
-- **API**: Hono (lightweight, edge-ready)
-- **MCP**: `@modelcontextprotocol/sdk` (stdio transport)
-- **Console**: Next.js 16, React 19, Tailwind v4, Lucide icons
-- **Compliance Engine**: Python FastMCP + FastAPI
-- **Figma Plugin**: Canvas API + esbuild
-
-## Team
-
-Built for the Cline AI-Assisted Enterprise Coding Hackathon — Team Husqvarna.
+- `run_compliance_scorecard`: Validate component JSX/HTML against active brand tokens & rules
+- `audit_context`: Fetch constraints & correct examples BEFORE writing code
+- `get_tokens`: Query design tokens (colors, typography, spacing) for any brand
+- `list_components`: List component contracts in the design system
+- `validate_artifact`: Run comprehensive brand compliance check
+- `transform_artifact`: Auto-fix brand violations
+- `get_brand_context`: System prompt grounding for AI generation

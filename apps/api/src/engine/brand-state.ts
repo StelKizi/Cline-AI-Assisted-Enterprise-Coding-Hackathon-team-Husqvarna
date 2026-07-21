@@ -1,15 +1,12 @@
-// ─── Husqvarna Brand State ───────────────────────────────────────────
-// Loads the Husqvarna design system tokens at runtime.
-// In production this would be fetched from a DB; for the hackathon
-// we read from the checked-in design_system files.
+// ─── Brand State Engine (Brand Agnostic) ──────────────────────────────────
+// Dynamically loads tokens and components for any brand state.
 
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Walk up to repo root
 function findRepoRoot(start: string): string {
   let dir = start;
   for (let i = 0; i < 10; i++) {
@@ -24,29 +21,46 @@ function findRepoRoot(start: string): string {
 }
 
 const ROOT = findRepoRoot(__dirname);
-const TOKENS_PATH = resolve(ROOT, "kyra-mcp/design_system/tokens.json");
-const COMPONENTS_PATH = resolve(ROOT, "kyra-mcp/design_system/components.json");
 
-let _tokens: Record<string, unknown> | null = null;
-let _components: Record<string, unknown> | null = null;
-
-export function getTokens(): Record<string, unknown> {
-  if (!_tokens) {
-    _tokens = JSON.parse(readFileSync(TOKENS_PATH, "utf-8"));
+export function getBrandDir(brandSlugOrId?: string): string {
+  if (process.env.KYRA_BRAND_DIR && existsSync(process.env.KYRA_BRAND_DIR)) {
+    return process.env.KYRA_BRAND_DIR;
   }
-  return _tokens!;
+
+  const slug = brandSlugOrId || process.env.KYRA_BRAND || "acme";
+
+  const candidates = [
+    resolve(ROOT, "brands", slug),
+    resolve(ROOT, "brands", slug.toLowerCase()),
+    resolve(ROOT, "kyra-mcp/design_system"),
+  ];
+
+  for (const dir of candidates) {
+    if (existsSync(resolve(dir, "tokens.json"))) {
+      return dir;
+    }
+  }
+
+  return resolve(ROOT, "brands/acme");
 }
 
-export function getComponents(): Record<string, unknown> {
-  if (!_components) {
-    _components = JSON.parse(readFileSync(COMPONENTS_PATH, "utf-8"));
-  }
-  return _components!;
+export function getTokens(brandSlugOrId?: string): Record<string, unknown> {
+  const dir = getBrandDir(brandSlugOrId);
+  const path = resolve(dir, "tokens.json");
+  if (!existsSync(path)) return {};
+  return JSON.parse(readFileSync(path, "utf-8"));
+}
+
+export function getComponents(brandSlugOrId?: string): Record<string, unknown> {
+  const dir = getBrandDir(brandSlugOrId);
+  const path = resolve(dir, "components.json");
+  if (!existsSync(path)) return {};
+  return JSON.parse(readFileSync(path, "utf-8"));
 }
 
 /** Extract all approved hex colors from the token set */
-export function getApprovedColors(): Set<string> {
-  const tokens = getTokens();
+export function getApprovedColors(brandSlugOrId?: string): Set<string> {
+  const tokens = getTokens(brandSlugOrId);
   const colors = new Set<string>();
 
   function walk(obj: unknown) {
@@ -60,20 +74,21 @@ export function getApprovedColors(): Set<string> {
     }
   }
 
-  walk((tokens as Record<string, unknown>).color);
+  if (tokens.color) {
+    walk(tokens.color);
+  }
   return colors;
 }
 
 /** Extract banned vocabulary from components (forbidden patterns) */
-export function getBannedTerms(): Array<{ term: string; reason?: string; alternatives?: string[] }> {
-  const components = getComponents();
+export function getBannedTerms(brandSlugOrId?: string): Array<{ term: string; reason?: string; alternatives?: string[] }> {
+  const components = getComponents(brandSlugOrId);
   const terms: Array<{ term: string; reason?: string; alternatives?: string[] }> = [];
 
   function walk(obj: unknown) {
     if (!obj || typeof obj !== "object") return;
     const rec = obj as Record<string, unknown>;
 
-    // Look for forbidden_patterns arrays in components
     if (Array.isArray(rec.forbidden_patterns)) {
       for (const p of rec.forbidden_patterns) {
         if (typeof p === "string") {

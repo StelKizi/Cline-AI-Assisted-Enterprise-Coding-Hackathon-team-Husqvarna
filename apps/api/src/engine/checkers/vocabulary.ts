@@ -12,6 +12,7 @@ export async function checkVocabulary(req: ValidateRequest): Promise<Violation[]
     return violations;
   }
 
+  // Fetch from brand state
   const bannedWords = getBannedTerms();
   const text = req.artifact.content.toLowerCase();
 

@@ -3,16 +3,17 @@ HTTP API wrapper around Kyra's validation logic.
 Runs separately from the MCP server (which stays stdio for Cline).
 Next.js dashboard calls this to show compliance results in the browser.
 """
-from fastapi import FastAPI
+from typing import Optional
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from main import audit_context, run_compliance_scorecard, list_components, get_tokens, get_component_spec
 
-app = FastAPI(title="Kyra API")
+app = FastAPI(title="Kyra Brand Compliance API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -21,36 +22,38 @@ app.add_middleware(
 class AuditRequest(BaseModel):
     component_name: str
     intent: str
+    brand: Optional[str] = None
 
 
 class ScorecardRequest(BaseModel):
     component_name: str
     code: str
+    brand: Optional[str] = None
 
 
 @app.get("/components")
-def get_components():
-    return {"result": list_components()}
+def get_components(brand: Optional[str] = Query(None)):
+    return {"result": list_components(brand=brand)}
 
 
 @app.get("/tokens")
-def get_design_tokens():
-    return {"result": get_tokens()}
+def get_design_tokens(brand: Optional[str] = Query(None)):
+    return {"result": get_tokens(brand=brand)}
 
 
 @app.get("/components/{name}")
-def get_spec(name: str):
-    return {"result": get_component_spec(name)}
+def get_spec(name: str, brand: Optional[str] = Query(None)):
+    return {"result": get_component_spec(name, brand=brand)}
 
 
 @app.post("/audit-context")
 def audit(req: AuditRequest):
-    return {"result": audit_context(req.component_name, req.intent)}
+    return {"result": audit_context(req.component_name, req.intent, brand=req.brand)}
 
 
 @app.post("/compliance-scorecard")
 def scorecard(req: ScorecardRequest):
-    raw = run_compliance_scorecard(req.component_name, req.code)
+    raw = run_compliance_scorecard(req.component_name, req.code, brand=req.brand)
     lines = raw.split("\n")
 
     # Parse result line: "Result: PASS (4/4 checks)" or "Result: FAIL (2/4 checks)"
@@ -63,10 +66,15 @@ def scorecard(req: ScorecardRequest):
     fixes = [l.replace("→ ", "") for l in lines if l.startswith("→")]
 
     return {
-        "status": status,
-        "passed": passed,
-        "total": total,
-        "checks": checks,
+        "component": req.component_name,
+        "score": int((passed / total) * 100) if total > 0 else 0,
+        "checks": [
+            {
+                "check": c.replace("✓ ", "").replace("✗ ", "").strip(),
+                "passed": c.startswith("✓"),
+                "details": "Requirement check"
+            } for c in checks
+        ],
         "fixes": fixes,
         "raw": raw,
     }
